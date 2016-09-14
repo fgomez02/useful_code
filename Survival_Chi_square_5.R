@@ -169,7 +169,6 @@ manual_review$call <-NULL
 manual_review$call <-manual_review$call_upper
 manual_review$call_upper <-NULL 
 somatic_manual_review <- manual_review[which(manual_review$call=="S"),]
-
 #test_merge <-merge(x,manual_review,by=c("chromosome_name","start","stop", "reference","variant","sample"))
 #vars_pers_test <-merge(y,somatic_manual_review,by=c("chromosome_name","start","stop", "reference","variant","sample"), all.y=TRUE)
 vars_mgi <- merge(vars_mgi,somatic_manual_review,by=c("chromosome_name","start","stop", "reference","variant","sample"))
@@ -473,8 +472,8 @@ write.table(surv_results[which(as.numeric(surv_results[,"rawp"])<rawpcutoff),], 
 mutations_mgi_3 <-(mutations_mgi)
 #mutations_mgi_3$sample <-rownames(mutations_mgi)
 
-clinicaldata_2 <- merge(clinicaldata,mutations_mgi_3,by.x ="sample",by.y = "row.names")
-clinicaldata_2 <-clinicaldata_2[,1:12]
+#clinicaldata_2 <- merge(clinicaldata,mutations_mgi_3,by.x ="sample",by.y = "row.names")
+clinicaldata_2 <-clinicaldata[,1:12]
 
 marker_names <- colnames(mutations_mgi_3)
 marker_data <-mutations_mgi_3
@@ -484,6 +483,9 @@ prognostic_data=clinicaldata_2[,c("bestresp","sample")]
 
 prognostic_data <- na.omit(prognostic_data)
 marker_data <-marker_data[prognostic_data$sample,]
+
+
+rec_marker_data <- colSums(as.numeric(as.array(marker_data)))
 
 marker_vs_prog_var=vector(length=length(marker_names)*length(prognostic_names))
 n=0
@@ -495,7 +497,7 @@ for (a in 1:length(marker_names)){
 }
 
 #Create array to store results for prognostic contingency table stats
-table_results = array(0, dimnames = list(marker_vs_prog_var, c("pvalue", "test")), dim=c(length(marker_vs_prog_var),2))
+table_results = array(0, dimnames = list(marker_vs_prog_var, c("pvalue", "test","mutations")), dim=c(length(marker_vs_prog_var),3))
 
 #Loop through all markers for categorical tests
 n=0
@@ -531,6 +533,7 @@ for (a in 1:length(marker_names)){
       table_results[n,"test"]="Pearson_Chi"
     }
   }
+  table_results[n,"mutations"]=sum(as.numeric(marker_data[,a]))
 }
 
 #Remove rows where no p-value could be calculated.  This screws up multtest even though it shouldn't matter
@@ -544,9 +547,8 @@ table_results=cbind(table_results, pvalues_adj_orig_order[,2:3])
 table_results_2 <- as.data.frame(table_results)
 table_results_2$test <-rownames(table_results_2)
 rownames(table_results_2) <-c()
-table_results_2 <- table_results_2[c(2,1,3,4)]
+table_results_2 <- table_results_2[c(2,3,1,4,5)]
 
-#add mutations to table
 
 #Create folder to stoer Chi Square Results
 dir.create("/Users/fgomez/Box\ Sync/LymphomaProject/P2C\ ibrutinib\ study\ data/Survival_analysis/output_3/ChiSquare_results",showWarnings = FALSE)
