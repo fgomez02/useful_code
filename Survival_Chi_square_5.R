@@ -471,7 +471,7 @@ write.table(surv_results[which(as.numeric(surv_results[,"rawp"])<rawpcutoff),], 
 ####################################################################################################################################
 ###### Do Chi square analysis
 ###################################################################################################################################
-
+######## DO NOT RUN CHI SQUARE WHEN RUNNING THE DURATION OF RESPONSE OUTCOME. THE MUTATION MATRIX IS SMALLER AND RESULTS ARE NOT STABLE#####
 mutations_mgi_3 <-(mutations_mgi)
 #mutations_mgi_3$sample <-rownames(mutations_mgi)
 
