@@ -414,7 +414,7 @@ plotKM=function(gene,samples,mutations,min_mutations,clinicaldata,timevar,eventv
   #colors = rainbow(5)
   colors = c("red","blue")
   title=paste(survtype," ",gene," mut status", sep="")
-  plot(krfit.by_RFgroup, col = colors, xlab = "Time (Months)", ylab = "Survival", main=title, cex.axis=1.5, cex.lab=1.6)
+  plot(krfit.by_RFgroup, mark.time=T, col = colors, xlab = "Time (Months)", ylab = "Survival", main=title, cex.axis=1.5, cex.lab=1.6)
   groups=sort(unique(surv_data[,"mut_status"])) #returns unique factor levels sorted alphabetically
   names(colors)=groups
   groups_custom=c("0","1")
