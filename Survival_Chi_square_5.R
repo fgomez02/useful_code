@@ -232,10 +232,13 @@ clinicaldata$dur_stat_recoded <- gsub("2","1", clinicaldata$dur_stat_recoded)
 vars_mgi <-vars_mgi[vars_mgi$gene_name %in% rec_mgi_b[rec_mgi_b$V1 >2,"gene_name"],]
 #genes <- unique(vars_mgi[vars_mgi$gene_name != "","gene_name"])
 genes <- unique(vars_mgi$gene_name)
+genetic_samples <-unique(vars_mgi$sample)
 
+## This is here to create to define a clinical dataset based on the outcome. Some outcomes have missing values.  Missing values are removed 
 define_sample <-function(clin_dat,outcome){
   samples <- na.omit(clin_dat[, c("sample", outcome)])$sample
   clin_dat <-clin_dat[clin_dat$sample %in% samples,]
+  clin_dat <-clin_dat[clin_dat$sample %in% genetic_samples, ]
   return(clin_dat)
   }
 clinicaldata_s <- define_sample(clinicaldata,"pfs_stat_recoded")
@@ -472,8 +475,9 @@ write.table(surv_results[which(as.numeric(surv_results[,"rawp"])<rawpcutoff),], 
 mutations_mgi_3 <-(mutations_mgi)
 #mutations_mgi_3$sample <-rownames(mutations_mgi)
 
-#clinicaldata_2 <- merge(clinicaldata,mutations_mgi_3,by.x ="sample",by.y = "row.names")
-clinicaldata_2 <-clinicaldata[,1:12]
+clinicaldata_2 <- merge(clinicaldata,mutations_mgi_3,by.x ="sample",by.y = "row.names")
+clinicaldata_2 <-clinicaldata_2[,1:12]
+
 
 marker_names <- colnames(mutations_mgi_3)
 marker_data <-mutations_mgi_3
